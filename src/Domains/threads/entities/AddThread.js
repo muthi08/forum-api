@@ -2,12 +2,12 @@ class AddThread {
   constructor(payload) {
     const { title, body, owner } = payload;
 
-    if (!title || !body || !owner) {
-      throw new Error('NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    if (title === undefined || body === undefined || owner === undefined) {
+      throw new Error('ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
     if (typeof title !== 'string' || typeof body !== 'string') {
-      throw new Error('NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+      throw new Error('ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
 
     this.title = title;

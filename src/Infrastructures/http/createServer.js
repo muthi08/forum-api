@@ -4,7 +4,7 @@ const ClientError = require('../../Commons/exceptions/ClientError');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 const users = require('../../Interfaces/http/api/users');
 const authentications = require('../../Interfaces/http/api/authentications');
-const threads = require('../../Interfaces/http/api/threads');
+const threads = require('../../Interfaces/http/api/threads')
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -12,33 +12,27 @@ const createServer = async (container) => {
     port: process.env.PORT,
   });
 
-  // Register plugin JWT
   await server.register([
-    Jwt,
+    {
+      plugin: Jwt
+    }
   ]);
 
-  // Define auth strategy
   server.auth.strategy('forum_api_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE
     },
-    validate: (artifacts, request, h) => {
-      return {
-        isValid: true,
-        credentials: {
-          id: artifacts.decoded.payload.id,
-          username: artifacts.decoded.payload.username,
-        },
-      };
-    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credential: {
+        id: artifacts.decoded.payload.id
+      }
+    })
   });
-
-  // Set default strategy
-  server.auth.default('forum_api_jwt');
 
   await server.register([
     {

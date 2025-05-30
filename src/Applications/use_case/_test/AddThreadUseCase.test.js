@@ -1,3 +1,4 @@
+const AddThread = require('../../../Domains/threads/entities/AddThread');
 const AddThreadUseCase = require('../AddThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 
@@ -7,12 +8,13 @@ describe('AddThreadUseCase', () => {
     const useCasePayload = {
       title: 'sebuah thread',
       body: 'isi dari sebuah thread',
+      owner: 'user-123',
     };
-    const owner = 'user-123';
+
     const expectedAddedThread = {
       id: 'thread-123',
       title: useCasePayload.title,
-      owner,
+      owner: useCasePayload.owner,
     };
 
     // Mocking
@@ -26,14 +28,10 @@ describe('AddThreadUseCase', () => {
     });
 
     // Act
-    const addedThread = await addThreadUseCase.execute(useCasePayload, owner);
+    const addedThread = await addThreadUseCase.execute(useCasePayload);
 
     // Assert
+    expect(mockThreadRepository.addThread).toBeCalledWith(new AddThread(useCasePayload));
     expect(addedThread).toStrictEqual(expectedAddedThread);
-    expect(mockThreadRepository.addThread).toBeCalledWith(expect.objectContaining({
-      title: useCasePayload.title,
-      body: useCasePayload.body,
-      owner,
-    }));
   });
 });
